@@ -65,10 +65,10 @@ in {
   };
   myScriptingPython =
     prev.python3.withPackages (ps: [ ps.pyyaml ps.mergedeep ]);
-  molecule = with final.python;
-    toPythonApplication (pkgs.molecule.overrdePythonAttrs (oldAttrs: {
+  molecule = with final.python.pkgs;
+    toPythonApplication (molecule.overridePythonAttrs (oldAttrs: {
       pythonPath = oldAttrs.pythonPath
-        ++ [ pkgs.python-vagrant pkgs.molecule-vagrant ];
+        ++ [ python-vagrant molecule-vagrant ];
     }));
   ansible = prev.ansible_2_13;
 }
