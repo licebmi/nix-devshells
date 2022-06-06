@@ -66,5 +66,5 @@ in {
   myScriptingPython =
     prev.python3.withPackages (ps: [ ps.pyyaml ps.mergedeep ]);
   molecule = prev.python.toPythonApplication (final.python.pkgs.molecule);
-
+  ansible = prev.ansible_2_13;
 }

@@ -12,7 +12,7 @@
       in {
         overlays = {
           Rex = import ./Rex.nix;
-          molecule = import ./molecule.nix;
+          ansible = import ./ansible.nix;
         };
         devShell = with pkgs; mkShell { packages = [ Rex ]; };
         nixpkgs = pkgs;
