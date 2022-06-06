@@ -78,6 +78,6 @@ in {
   ansible = with final.python.pkgs;
     toPythonApplication (ansible-core.overridePythonAttrs (oldAttrs: {
       propagatedBuildInputs = oldAttrs.propagatedBuildInputs
-        ++ [ python-vagrant ];
+        ++ [ python-vagrant molecule-vagrant ];
     }));
 }
