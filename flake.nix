@@ -10,10 +10,11 @@
           overlays = (nixpkgs.lib.attrValues self.overlays.${system});
         };
       in {
-        overlays = { perl = import ./Rex.nix; };
-        devShell = with pkgs;
-          mkShell {
-            packages = [ Rex ];
-          };
+        overlays = {
+          Rex = import ./Rex.nix;
+          molecule = import ./molecule.nix;
+        };
+        devShell = with pkgs; mkShell { packages = [ Rex ]; };
+        nixpkgs = pkgs;
       });
 }
