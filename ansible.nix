@@ -74,5 +74,9 @@ in {
     toPythonApplication (molecule.overridePythonAttrs (oldAttrs: {
       pythonPath = oldAttrs.pythonPath ++ [ python-vagrant molecule-vagrant ];
     }));
-  ansible = prev.ansible_2_13;
+  ansible = with final.python.pkgs;
+    toPythonApplication (ansible-core.overridePythonAttrs (oldAttrs: {
+      propagatedBuildInputs = oldAttrs.propagatedBuildInputs
+        ++ [ python-vagrant ];
+    }));
 }
