@@ -53,6 +53,7 @@ in {
             rev = "v${version}";
             sha256 = "HuIZsNaHYQLMXa67XnFhFnkhY6SVUN9y/s1EyOEVmwo=";
           };
+          buildInputs = [ jinja2 ];
           pythonPath = [ pyyaml python-vagrant ];
           format = "pyproject";
           patchPhase = ''
@@ -67,8 +68,7 @@ in {
     prev.python3.withPackages (ps: [ ps.pyyaml ps.mergedeep ]);
   molecule = with final.python.pkgs;
     toPythonApplication (molecule.overridePythonAttrs (oldAttrs: {
-      pythonPath = oldAttrs.pythonPath
-        ++ [ python-vagrant molecule-vagrant ];
+      pythonPath = oldAttrs.pythonPath ++ [ python-vagrant molecule-vagrant ];
     }));
   ansible = prev.ansible_2_13;
 }
