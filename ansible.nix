@@ -18,7 +18,7 @@ in {
           pname = "molecule";
           version = "3.6.1";
 
-          propagatedBuildInputs = [
+          pythonPath = [
             jsonschema
             ansible-compat
             cerberus
@@ -53,18 +53,22 @@ in {
             rev = "v${version}";
             sha256 = "HuIZsNaHYQLMXa67XnFhFnkhY6SVUN9y/s1EyOEVmwo=";
           };
-          pythonPath = [ molecule pyyaml python-vagrant ];
+          pythonPath = [ pyyaml python-vagrant ];
           format = "pyproject";
           patchPhase = ''
             substituteInPlace setup.cfg \
               --replace "selinux" "" \
-              --replace "molecule >= 3.4.1" "molecule"
+              --replace "molecule >= 3.4.1" ""
           '';
         };
     };
   };
   myScriptingPython =
     prev.python3.withPackages (ps: [ ps.pyyaml ps.mergedeep ]);
-  molecule = prev.python.toPythonApplication (final.python.pkgs.molecule);
+  molecule = with final.python;
+    toPythonApplication (pkgs.molecule.overrdePythonAttrs (oldAttrs: {
+      pythonPath = oldAttrs.pythonPath
+        ++ [ pkgs.python-vagrant pkgs.molecule-vagrant ];
+    }));
   ansible = prev.ansible_2_13;
 }
