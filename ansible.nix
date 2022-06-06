@@ -21,7 +21,7 @@ in {
           SETUPTOOLS_SCM_PRETEND_VERSION = "v${version}";
           buildInputs = [ setuptools-scm ];
 
-          pythonPath = [
+          propagatedBuildInputs = [
             jsonschema
             ansible-compat
             cerberus
@@ -51,7 +51,7 @@ in {
           format = "pyproject";
           SETUPTOOLS_SCM_PRETEND_VERSION = "v${version}";
           buildInputs = [ setuptools-scm jinja2 ];
-          pythonPath = [ molecule pyyaml python-vagrant ];
+          propagatedBuildInputs = [ molecule pyyaml python-vagrant ];
 
           src = fetchFromGitHub {
             owner = "ansible-community";
@@ -72,7 +72,8 @@ in {
     prev.python3.withPackages (ps: [ ps.pyyaml ps.mergedeep ]);
   molecule = with final.python.pkgs;
     toPythonApplication (molecule.overridePythonAttrs (oldAttrs: {
-      pythonPath = oldAttrs.pythonPath ++ [ python-vagrant molecule-vagrant ];
+      propagatedBuildInputs = oldAttrs.propagatedBuildInputs
+        ++ [ python-vagrant molecule-vagrant ];
     }));
   ansible = with final.python.pkgs;
     toPythonApplication (ansible-core.overridePythonAttrs (oldAttrs: {
