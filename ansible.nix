@@ -64,6 +64,7 @@ in {
             substituteInPlace setup.cfg \
               --replace "selinux" "" \
               --replace "molecule >= 3.4.1" ""
+            find molecule_vagrant/ -type f -exec echo include {} \; >> MANIFEST.in
           '';
         };
     };
