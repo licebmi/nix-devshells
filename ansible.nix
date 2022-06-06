@@ -51,7 +51,7 @@ in {
           format = "pyproject";
           SETUPTOOLS_SCM_PRETEND_VERSION = "v${version}";
           buildInputs = [ setuptools-scm jinja2 ];
-          pythonPath = [ pyyaml python-vagrant ];
+          pythonPath = [ molecule pyyaml python-vagrant ];
 
           src = fetchFromGitHub {
             owner = "ansible-community";
