@@ -17,6 +17,9 @@ in {
         buildPythonPackage rec {
           pname = "molecule";
           version = "3.6.1";
+          format = "pyproject";
+          SETUPTOOLS_SCM_PRETEND_VERSION = "v${version}";
+          buildInputs = [ setuptools-scm ];
 
           pythonPath = [
             jsonschema
@@ -34,8 +37,6 @@ in {
             rich
           ];
 
-          format = "pyproject";
-
           src = fetchFromGitHub {
             owner = "ansible-community";
             repo = "molecule";
@@ -47,16 +48,19 @@ in {
         buildPythonPackage rec {
           pname = "molecule-vagrant";
           version = "1.0.0";
+          format = "pyproject";
+          SETUPTOOLS_SCM_PRETEND_VERSION = "v${version}";
+          buildInputs = [ setuptools-scm jinja2 ];
+          pythonPath = [ pyyaml python-vagrant ];
+
           src = fetchFromGitHub {
             owner = "ansible-community";
             repo = "molecule-vagrant";
             rev = "v${version}";
             sha256 = "HuIZsNaHYQLMXa67XnFhFnkhY6SVUN9y/s1EyOEVmwo=";
           };
-          buildInputs = [ jinja2 ];
-          pythonPath = [ pyyaml python-vagrant ];
-          format = "pyproject";
-          patchPhase = ''
+
+          postPatch = ''
             substituteInPlace setup.cfg \
               --replace "selinux" "" \
               --replace "molecule >= 3.4.1" ""
