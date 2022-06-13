@@ -258,6 +258,21 @@ final: prev:
         };
       };
 
+      URLEncode = buildPerlPackage {
+        pname = "URL-Encode";
+        version = "0.03";
+        src = prev.fetchurl {
+          url = "mirror://cpan/authors/id/C/CH/CHANSEN/URL-Encode-0.03.tar.gz";
+          sha256 =
+            "7295d7f07796b179131d9c0f230a6effa56d204de2f8dc72f2e09c61458c8ee6";
+        };
+        meta = {
+          description =
+            "Encoding and decoding of C<application/x-www-form-urlencoded> encoding";
+          license = with prev.lib.licenses; [ artistic1 gpl1Plus ];
+        };
+      };
+
       ZabbixTiny = buildPerlModule {
         pname = "Zabbix-Tiny";
         version = "1.11";
@@ -337,6 +352,7 @@ final: prev:
         TextGlob
         TextTable
         URI
+        URLEncode
         XMLSimple
         YAML
         ZabbixTiny
