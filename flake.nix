@@ -4,13 +4,8 @@
 
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system: {
-      overlays = {
-        Rex = import ./Rex.nix;
-        ansible = import ./ansible.nix;
-        misc = import ./misc.nix;
-      };
       devShells = {
-        infrastructure = with self.nixpkgs.infrastructure;
+        infrastructure = with self.nixpkgs.${system}.infrastructure;
           mkShell {
             packages =
               [ myScriptingPython Rex molecule ansible ansible-lint yamllint ];
@@ -22,5 +17,11 @@
           overlays = with self.overlays; [ Rex ansible ];
         };
       };
-    });
+    }) // {
+      overlays = {
+        Rex = import ./Rex.nix;
+        ansible = import ./ansible.nix;
+        misc = import ./misc.nix;
+      };
+    };
 }
