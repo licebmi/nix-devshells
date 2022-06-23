@@ -13,6 +13,7 @@
         overlays = {
           Rex = import ./Rex.nix;
           ansible = import ./ansible.nix;
+          misc = import ./misc.nix;
         };
         devShell = with pkgs; mkShell { packages = [ Rex ]; };
         nixpkgs = pkgs;
