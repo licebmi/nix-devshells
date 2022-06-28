@@ -5,13 +5,13 @@
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system: {
       devShells = {
-        infrastructure = with self.nixpkgs.${system}.infrastructure;
+        infrastructure = with self.packages.${system}.infrastructure;
           mkShell {
             packages =
               [ myScriptingPython Rex molecule ansible ansible-lint yamllint ];
           };
       };
-      nixpkgs = {
+      packages = {
         infrastructure = import nixpkgs {
           inherit system;
           overlays = with self.overlays; [ Rex ansible ];
