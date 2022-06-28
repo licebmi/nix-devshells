@@ -308,6 +308,9 @@ final: prev:
       setSourceRoot = ''
         (cd source && dzil build --in $NIX_BUILD_TOP/dist)
         export sourceRoot=$NIX_BUILD_TOP/dist'';
+      checkInputs = [
+        prev.which
+      ];
       buildInputs = [
         prev.perl
         DistZilla
