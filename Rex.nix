@@ -309,10 +309,11 @@ final: prev:
         (cd source && dzil build --in $NIX_BUILD_TOP/dist)
         export sourceRoot=$NIX_BUILD_TOP/dist'';
       checkInputs = [
-        prev.which
+        prev.coreutils-full
       ];
       buildInputs = [
         prev.perl
+        prev.coreutils-full
         DistZilla
         DistZillaPluginMakeMakerAwesome
         DistZillaPluginMetaProvidesPackage
