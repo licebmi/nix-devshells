@@ -3,77 +3,108 @@ final: prev:
 let fetchFromGitHub = prev.fetchFromGitHub;
 in {
   python = prev.python3.override {
-    packageOverrides = final-python: prev-python: {
-      # cerberus = prev-python.cerberus.overridePythonAttrs (oldAttrs: rec {version = "1.3.2"; src = fetchFromGitHub {owner = "pyeve"; repo = "cerberus"; rev = version; sha256 = "Kv9gzy6pj3p+ddx4R6mSjE0JwonmywwySwOTf3i90y8=";};});
-      molecule = with final.python.pkgs;
+    packageOverrides = final-python: prev-python: rec {
+      ansible-compat = prev-python.ansible-compat.overridePythonAttrs
+        (oldAttrs: rec {
+          pname = "ansible-compat";
+          version = "3.0.2";
+          src = prev-python.fetchPypi {
+            inherit pname version;
+            hash = "sha256-oQ6hkfnv4IWQ/2TLRqMa8fgULAhhjbGkvIJ+0lfGgjA=";
+          };
+        });
+
+      molecule = with prev-python;
         buildPythonPackage rec {
           pname = "molecule";
-          version = "4.0.4";
+          version = "5.0.1";
           format = "pyproject";
-          SETUPTOOLS_SCM_PRETEND_VERSION = "v${version}";
+          SETUPTOOLS_SCM_PRETEND_VERSION = version;
           buildInputs = [ setuptools-scm ];
+          propagatedBuildInputs = [ ansible-core final-python.ansible-compat ];
+
           postPatch = ''
-            find src/molecule/data -type f -exec echo include {} \; >> MANIFEST.in
+            cat <<EOF > MANIFEST.in
+            include LICENSE
+            include README.md
+
+            recursive-exclude * __pycache__
+            recursive-exclude * *.py[co]
+
+            recursive-include src/data *
+            EOF
           '';
 
-          propagatedBuildInputs = [
-            jsonschema
-            ansible-compat
-            cerberus
+          pythonPath = [
+            jinja2
             click
             click-help-colors
-            cookiecutter
-            enrich
-            jinja2
-            packaging
-            paramiko
-            pluggy
             pyyaml
-            rich
+            pluggy
+            jsonschema
+            enrich
+            cookiecutter
+            packaging
           ];
 
           src = fetchFromGitHub {
             owner = "ansible-community";
             repo = "molecule";
             rev = "v${version}";
-            sha256 = "sha256-rnN/ITMKuQIWpn8hkD+qYcrB9PqLsM52BDuQ9j7Eqyw=";
+            sha256 = "sha256-zdipn7pRO0azIE7vS+JR+V5sKL/eZaavRXaSXVjtFus=";
           };
         };
-      molecule-vagrant = with final.python.pkgs;
+
+      molecule-plugins = with prev-python;
         buildPythonPackage rec {
-          pname = "molecule-vagrant";
-          version = "1.0.0";
+          pname = "molecule-plugins";
+          version = "23.4.1";
           format = "pyproject";
-          SETUPTOOLS_SCM_PRETEND_VERSION = "v${version}";
-          buildInputs = [ setuptools-scm jinja2 ];
-          propagatedBuildInputs = [ molecule pyyaml python-vagrant ];
+          SETUPTOOLS_SCM_PRETEND_VERSION = version;
+          buildInputs = [ setuptools-scm ];
+          propagatedBuildInputs = [ ansible-core final-python.ansible-compat ];
+
+          pythonPath = [
+            molecule
+            pluggy
+            click-help-colors
+            enrich
+            cookiecutter
+            python-vagrant
+          ];
 
           src = fetchFromGitHub {
             owner = "ansible-community";
-            repo = "molecule-vagrant";
+            repo = "molecule-plugins";
             rev = "v${version}";
-            sha256 = "HuIZsNaHYQLMXa67XnFhFnkhY6SVUN9y/s1EyOEVmwo=";
+            sha256 = "sha256-qCUID7p89gO/u4OcWET1zLSJXl14IH/M8qBxMT46jH8=";
           };
-
           postPatch = ''
-            substituteInPlace setup.cfg \
-              --replace "selinux" "" \
-              --replace "molecule >= 3.4.1" ""
-            find molecule_vagrant/ -type f -exec echo include {} \; >> MANIFEST.in
+            cat <<EOF > MANIFEST.in
+            include LICENSE
+            include README.md
+
+            recursive-exclude * __pycache__
+            recursive-exclude * *.py[co]
+
+            recursive-include src/molecule_plugins/*/cookiecutter **/*
+            recursive-include src/molecule_plugins/*/modules **/*
+            recursive-include src/molecule_plugins/*/playbooks **/*
+            EOF
           '';
         };
     };
   };
+
   myScriptingPython =
-    prev.python3.withPackages (ps: [ ps.pyyaml ps.mergedeep ]);
+    final.python3.withPackages (ps: [ ps.pyyaml ps.mergedeep ]);
   molecule = with final.python.pkgs;
     toPythonApplication (molecule.overridePythonAttrs (oldAttrs: {
-      propagatedBuildInputs = oldAttrs.propagatedBuildInputs
-        ++ [ python-vagrant molecule-vagrant ];
+      pythonPath = oldAttrs.pythonPath ++ [ molecule-plugins ];
     }));
-  ansible = with final.python.pkgs;
-    toPythonApplication (ansible-core.overridePythonAttrs (oldAttrs: {
-      propagatedBuildInputs = oldAttrs.propagatedBuildInputs
-        ++ [ python-vagrant molecule-vagrant ];
-    }));
+  # ansible = with final.python.pkgs;
+  #   toPythonApplication (ansible-core.overridePythonAttrs (oldAttrs: {
+  #     propagatedBuildInputs = oldAttrs.propagatedBuildInputs
+  #       ++ [ molecule molecule-plugins ];
+  #   }));
 }
