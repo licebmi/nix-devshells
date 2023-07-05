@@ -9,7 +9,7 @@
         infrastructure = with self.packages.${system}.infrastructure;
           mkShell {
             packages =
-              [ myScriptingPython Rex molecule ansible ansible-lint yamllint act ];
+              [ myScriptingPython Rex molecule ansible ansible-lint yamllint act ansible-doctor ];
           };
       };
       packages = {
